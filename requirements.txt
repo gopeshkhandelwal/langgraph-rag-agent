@@ -1,0 +1,12 @@
+langchain
+langchain-community
+langchain-huggingface
+langgraph
+python-dotenv
+requests
+sentence-transformers
+flake8
+black
+faiss-gpu
+faiss-cpu
+langchain-openai
