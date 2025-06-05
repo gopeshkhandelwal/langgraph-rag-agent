@@ -1,0 +1,56 @@
+
+Intel Tiber Developer Cloud – Resource ComputePool Documentation
+---------------------------------------------------------
+
+1. Use Cases for Resource ComputePools
+
+- User Assignment & Reservation
+  Servers are assigned to users to help PMs reserve and allocate to customers and Liftoff teams.
+  Goal: Ensure customers receive what they’ve paid for.
+
+- Node ComputePool Administration
+  - Admins of a node ComputePool can assign users/accounts to that ComputePool.
+  - ITAC Admins can create high-level node ComputePools.
+
+- Break-Fix and Debugging
+  Cordoning servers enables internal teams to conduct break-fix and debugging efforts.
+
+- Dedicated ComputePools
+  - Specific ComputePools for Customer Zero and Intel Labs.
+  - Quarantine ComputePools for temporarily deactivated healthy nodes.
+
+
+2. Node ComputePool Lifecycle & Hierarchy
+
+- Transition Flow
+  - Nodes start in Customer Zero Ready.
+  - Once signed off by Customer Zero, they transition to General.
+  - If a node is meant for a specific customer, it bypasses General.
+
+- Exception Handling
+  - Scenario: A node assigned to a customer fails and moves to Maintenance.
+  - Action Needed: Document how to restore the node to its original customer post-recovery.
+  - Owners: Lele, Abhijit
+
+
+3. Labels and Definitions
+
+Label                  | Purpose                                         | Primary Users              | Additional Stakeholders
+-----------------------|-------------------------------------------------|----------------------------|--------------------------
+Maintenance            | Break-fix and debugging                         | BMaaS, DCIM, SRE           | BMaaS, DCIM, SRE
+Quarantine             | Healthy but not available to customers          | DCIM, SRE                  | DCIM, SRE
+Customer Zero Ready    | For evaluation by Customer Zero                 | Customer Zero              | BMaaS, Program Mgmt
+Liftoff Ready          | Ready for Liftoff team to assign *(TBD)*        | Product Mgmt, Liftoff      | TBD (Harmen Van der Linde)
+Customer-Name Ready    | Assigned to specific customer *(TBD)*           | Product Management         | TBD (Harmen Van der Linde)
+Intel-Internal Ready   | Reserved for Intel-internal use                 | Intel Internal             | –
+Learning Service       | For Learning-as-a-Service allocations           | slurm-management@intel.com | SRE, Program Mgmt
+General                | Default ComputePool for general usage                  | –                          | –
+
+
+4. Special Notes: CMH02 / G3
+
+- All nodes not ready or in Maintenance are tagged accordingly.
+- Lifecycle Flow:
+  General → Maintenance → Cust Zero → General
+- PoC Customer Nodes:
+  Eventually transition to General ComputePool.

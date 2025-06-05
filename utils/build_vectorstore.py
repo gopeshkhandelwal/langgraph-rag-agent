@@ -5,7 +5,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-DOC_PATH = os.path.join(ROOT_DIR, "..", "docs", "itac.txt")
+DOC_PATH = os.path.join(ROOT_DIR, "..", "docs", "compute_node_pools.txt")
 print(f"DOC_PATH: {DOC_PATH}")
 
 with open(DOC_PATH, "r") as f:
