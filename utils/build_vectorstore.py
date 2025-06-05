@@ -6,6 +6,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DOC_PATH = os.path.join(ROOT_DIR, "..", "docs", "itac.txt")
+print(f"DOC_PATH: {DOC_PATH}")
 
 with open(DOC_PATH, "r") as f:
     content = f.read()
