@@ -17,3 +17,6 @@ run:
 
 clean:
 	rm -rf .venv vectorstore
+
+test-rag:
+	. .venv/bin/activate && python agent_app/rag_test.py

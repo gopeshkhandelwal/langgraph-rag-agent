@@ -15,7 +15,7 @@ if not os.path.exists(INDEX_DIR):
     raise FileNotFoundError(f"FAISS index not found at {INDEX_DIR}. Run `build_vectorstore.py` first.")
 
 vectorstore = FAISS.load_local(INDEX_DIR, embedding_model, allow_dangerous_deserialization=True)
-retriever = vectorstore.as_retriever(search_kwargs={"k": 2})
+retriever = vectorstore.as_retriever()
 
 rag_chain = RetrievalQA.from_chain_type(
     llm=get_llm(),
