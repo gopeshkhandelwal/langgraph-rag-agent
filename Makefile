@@ -8,8 +8,12 @@ setup:
 build:
 	. .venv/bin/activate && python utils/build_vectorstore.py
 
+build-vectorstore:
+	@echo "🔨 Building vector store..."
+	. .venv/bin/activate && python utils/build_vectorstore.py
+
 run:
-	. .venv/bin/activate && python agent_app/main_graph.py
+	. .venv/bin/activate && python agent_app/main.py
 
 clean:
 	rm -rf .venv vectorstore

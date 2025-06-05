@@ -1,6 +1,6 @@
 import requests
 from langchain.tools import tool
-from agent_app.config import get_openweather_api_key
+from config import get_openweather_api_key
 
 @tool
 def CityWeather(city: str) -> str:

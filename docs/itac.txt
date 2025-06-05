@@ -1,5 +1,5 @@
 Intel Tiber AI Cloud offers a cloud compute platform where you develop solutions on the latest Intel® hardware, AI accelerators, and optimized software stacks. The platform helps you:
 
-Implement AI deployments, developer ecosystems, and benchmark testing
-Scale AI deployments from virtual machines, single nodes, to super-computing clusters.
-Leverage integration of open source models, accelerator software, and frameworks
+- Implement AI deployments, developer ecosystems, and benchmark testing  
+- Scale AI deployments from virtual machines, single nodes, to super-computing clusters  
+- Leverage integration of open source models, accelerator software, and frameworks

@@ -3,8 +3,8 @@ from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
-from agent_app.prompts import get_custom_rag_prompt
-from agent_app.config import get_llm
+from prompts import get_custom_rag_prompt
+from config import get_llm
 from langchain.tools import tool
 import os
 

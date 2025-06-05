@@ -1,10 +1,10 @@
 import sys
 import os
 from langchain_core.messages import HumanMessage
-from agent_app.config import get_llm
-from agent_app.langgraph_graph import build_graph
-from agent_app.rag import DocumentQA
-from agent_app.weather import CityWeather
+from config import get_llm
+from langgraph_graph import build_graph
+from rag import DocumentQA
+from weather import CityWeather
 
 # Fix path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

@@ -3,8 +3,8 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt.tool_node import ToolNode, tools_condition
 from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage
-from agent_app.rag import DocumentQA
-from agent_app.weather import CityWeather
+from rag import DocumentQA
+from weather import CityWeather
 
 # ✅ Define your state schema
 class AgentState(TypedDict):
