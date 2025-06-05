@@ -1,21 +1,21 @@
 # LangGraph RAG Agent
 
-This project demonstrates a Retrieval-Augmented Generation (RAG) agent built using [LangGraph](https://docs.langchain.com/langgraph/) and [LangChain], using `ToolNode` and `ToolExecutor` to invoke tools like document-based Q&A and weather APIs.
+A Retrieval-Augmented Generation (RAG) agent using [LangGraph](https://docs.langchain.com/langgraph/) and [LangChain](https://docs.langchain.com/docs), featuring modular tool invocation for document Q&A and weather APIs.
 
 ---
 
-## 📦 Features
+## 🚩 Features
 
-- ✅ LangGraph-based agent orchestration
-- 📄 `DocumentQA`: Answer questions from internal documents via FAISS + HuggingFace embeddings
-- ☁️ `CityWeather`: Fetch real-time weather using OpenWeather API
-- 🔧 ToolExecutor + ToolNode integration (latest best practices)
+- 🧩 LangGraph-based agent orchestration
+- 📄 `DocumentQA`: Answers from internal docs (FAISS + HuggingFace embeddings)
+- ☁️ `CityWeather`: Real-time weather via OpenWeather API
+- 🔧 Modern `ToolExecutor` + `ToolNode` integration
 
 ---
 
-## 🚀 Setup Instructions
+## 🚀 Quickstart
 
-### 1. Create and Activate Virtual Environment
+### 1. Create & Activate Virtual Environment
 
 ```bash
 python3 -m venv .venv
@@ -33,9 +33,17 @@ pip install -r requirements.txt
 Create a `.env` file in the root folder with:
 
 ```env
-OPENAI_API_BASE_VLLM=http://your-server:8000/v1
-OPENAI_MODEL_VLLM=vllm-fork-with-llama-2-7b-chat-hf
-OPENWEATHER_API_KEY=your_openweather_api_key
+# === OpenAI Official API ===
+OPENAI_API_KEY=your-openai-api-key
+OPENAI_API_BASE=https://api.openai.com/v1
+OPENAI_MODEL=gpt-4
+
+# === OpenWeatherMap API ===
+OPENWEATHER_API_KEY=your-openweather-api-key
+
+# === IDC API Token (for MCP-integrated demos) ===
+IDC_API_TOKEN=your-idc-token-if-applicable
+
 ```
 
 ---
@@ -43,7 +51,7 @@ OPENWEATHER_API_KEY=your_openweather_api_key
 ## 🛠 Build VectorStore
 
 ```bash
-python utils/build_vectorstore.py
+make build-vectorstore
 ```
 
 Make sure `docs/itac.txt` exists and contains content to embed.
@@ -53,7 +61,7 @@ Make sure `docs/itac.txt` exists and contains content to embed.
 ## ▶️ Run the Agent
 
 ```bash
-PYTHONPATH=. python agent_app/main.py
+make run
 ```
 
 This will launch the interactive RAG agent with support for:
