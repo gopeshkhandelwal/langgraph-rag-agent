@@ -1,88 +1,67 @@
+from typing import Annotated, List, TypedDict
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
-from langchain_core.messages import BaseMessage
+from langchain_core.messages import BaseMessage, AIMessage, SystemMessage
 from langgraph.prebuilt.tool_node import ToolNode
-from typing import Annotated, List, TypedDict
+from config import get_llm
 from rag import DocumentQA
 from weather import CityWeather
+import logging
+
 
 class AgentState(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
     output: str
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s"
+)
+
+logger = logging.getLogger(__name__)
+llm = get_llm()
+tools = [DocumentQA, CityWeather]
+llm_with_tools = llm.bind_tools(tools)
+
+
+def router(state: AgentState) -> AgentState:
+    """LLM generates tool calls, actual tool run handled by ToolNode."""
+    system_message = SystemMessage(
+        content="You are a helpful assistant. Use the CityWeather tool for weather questions and DocumentQA for document questions. Do not just repeat the user's question."
+    )
+    logger.info("Iside router")
+    logger.debug(f"talk_to_llm State: {state}")
+    messages = [system_message] + state["messages"]
+    ai_msg = llm_with_tools.invoke(messages)
+    logger.debug(f"talk_to_llm Response: {ai_msg.content}")  # Debug print
+    return {
+                **state,
+                "messages": state["messages"] + [ai_msg],
+                "next": "extract_output"
+            }
+
 def extract_output(state: AgentState) -> AgentState:
+    """Extracts final AI/tool message to populate output and update state."""
+    logger.info("Iside extract_output")
     for msg in reversed(state["messages"]):
         if hasattr(msg, "content") and isinstance(msg.content, str):
-            return {**state, "output": msg.content}
-    return {**state, "output": "⚠️ No response"}
-
-def context_aware_router(state: AgentState) -> AgentState:
-    """
-    Generic router: routes to DocumentQA only for ComputePool queries,
-    and to CityWeather for weather-related queries. Handles ambiguous follow-ups.
-    """
-    DOCQA_KEYWORDS = [
-        "computepool", "compute pool", "nodepool", "node pool", "intel internal"
-    ]
-    WEATHER_KEYWORDS = [
-        "weather", "temperature", "forecast", "humidity", "rain", "climate"
-    ]
-    AMBIGUOUS_FOLLOWUPS = [
-        "where was it launched", "who can use it", "what is it", "where is it available"
-    ]
-
-    user_message = None
-    for msg in reversed(state["messages"]):
-        if getattr(msg, "type", None) == "human":
-            user_message = msg
-            break
-
-    if not user_message or not hasattr(user_message, "content"):
-        return state
-
-    user_content = user_message.content.lower()
-
-    # Route to DocumentQA only for Intel Tiber Developer Cloud topics
-    if any(keyword in user_content for keyword in DOCQA_KEYWORDS):
-        return state
-
-    # Route to CityWeather for weather-related queries
-    if any(keyword in user_content for keyword in WEATHER_KEYWORDS):
-        return state
-
-    # Handle ambiguous follow-up questions lacking context
-    if any(phrase in user_content for phrase in AMBIGUOUS_FOLLOWUPS):
-        found_context = False
-        for msg in reversed(state["messages"]):
-            if msg is user_message:
-                continue
-            if hasattr(msg, "content") and any(
-                keyword in msg.content.lower() for keyword in DOCQA_KEYWORDS
-            ):
-                found_context = True
-                break
-        if not found_context:
-            clarification = (
-                "I'm sorry, but I can't provide the information you're looking for because your question is missing some context. "
-                "Could you please provide more details about Intel Tiber Developer Cloud?"
-            )
-            state = {
+            return {
                 **state,
-                "messages": state["messages"] + [
-                    type(user_message)(content=clarification, type="ai")
-                ]
+                "output": msg.content,
+                "messages": state["messages"] + [AIMessage(content=msg.content)]
             }
-            return state
+    return {
+        **state,
+        "output": "⚠️ No response",
+        "messages": state["messages"] + [AIMessage(content="⚠️ No response")]
+    }
 
-    return state
-
+    
 def build_graph():
     builder = StateGraph(AgentState)
 
-    tool_node = ToolNode([DocumentQA, CityWeather])
-
-    builder.add_node("router", context_aware_router)
-    builder.add_node("tools", tool_node)
+    builder.add_node("router", router)
+    builder.add_node("tools", ToolNode([DocumentQA, CityWeather]))
     builder.add_node("extract_output", extract_output)
 
     builder.add_edge("router", "tools")

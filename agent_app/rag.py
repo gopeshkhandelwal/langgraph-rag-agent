@@ -7,6 +7,13 @@ from prompts import get_custom_rag_prompt
 from config import get_llm
 from langchain.tools import tool
 import os
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 INDEX_DIR = "vectorstore/faiss_index"
 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
@@ -27,6 +34,8 @@ rag_chain = RetrievalQA.from_chain_type(
 @tool
 def DocumentQA(question: str) -> str:
     """Answer questions from internal documents using a RAG pipeline."""
+    logger.info(f"Received question for RAG: {question}")
+    docs = retriever.get_relevant_documents(question)
     result = rag_chain.invoke({"query": question})
     answer = result.get("result", "") if isinstance(result, dict) else result
     return answer.strip().replace('"', '')

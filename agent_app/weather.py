@@ -1,10 +1,18 @@
 import requests
 from langchain.tools import tool
 from config import get_openweather_api_key
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 @tool
 def CityWeather(city: str) -> str:
     """Fetch current weather for a given city using the OpenWeather API."""
+    logger.info(f"Fetching weather for city: {city}")
     try:
         api_key = get_openweather_api_key()
         url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
